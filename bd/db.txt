@@ -1,0 +1,120 @@
+-- Base de datos 1
+CREATE DATABASE homeclub_core;
+
+-- Base de datos 2
+CREATE DATABASE homeclub_media;
+--bd 1 
+
+-- ENUMs
+CREATE TYPE tipo_apartamento AS ENUM ('corporativo', 'turistico');
+CREATE TYPE tipo_tarifa AS ENUM ('mensual', 'diario');
+CREATE TYPE estado_reserva AS ENUM ('activa', 'anulada');
+CREATE TYPE concepto_pago AS ENUM ('alquiler', 'tasa_servicio', 'tasa_reserva');
+
+-- Tabla: apartamento
+CREATE TABLE apartamento (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    direccion VARCHAR(255) NOT NULL,
+    tipo tipo_apartamento NOT NULL,
+    ciudad VARCHAR(100),
+    pais VARCHAR(100),
+    latitud NUMERIC(10, 6),
+    longitud NUMERIC(10, 6),
+    estado BOOLEAN DEFAULT TRUE
+);
+
+-- Tabla: tarifa
+CREATE TABLE tarifa (
+    id SERIAL PRIMARY KEY,
+    apartamento_id INT NOT NULL REFERENCES apartamento(id),
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    precio NUMERIC(10, 2) NOT NULL,
+    tipo tipo_tarifa NOT NULL
+);
+
+-- Tabla: cliente
+CREATE TABLE cliente (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    email VARCHAR(150) UNIQUE NOT NULL
+);
+
+-- Tabla: reserva
+CREATE TABLE reserva (
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(50) UNIQUE NOT NULL,
+    apartamento_id INT NOT NULL REFERENCES apartamento(id),
+    cliente_id INT NOT NULL REFERENCES cliente(id),
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    estado estado_reserva NOT NULL
+);
+
+-- Tabla: pago
+CREATE TABLE pago (
+    id SERIAL PRIMARY KEY,
+    reserva_id INT NOT NULL REFERENCES reserva(id),
+    concepto concepto_pago NOT NULL,
+    monto NUMERIC(10, 2) NOT NULL
+);
+
+-- bd2
+-- Tabla: propiedad_info
+CREATE TABLE propiedad_info (
+    codigo_propiedad INT PRIMARY KEY, -- referencia lógica al id de "apartamento"
+    descripcion TEXT,
+    url_imagen VARCHAR(255)
+);
+
+-- data apartamentos
+USE homeclub_core;
+
+INSERT INTO apartamento (id, nombre, direccion, tipo, ciudad, pais, latitud, longitud, estado)
+VALUES
+(1, 'Propiedad torrenazas', 'Dirección 1', 'corporativo', 'Madrid', 'España', 40.421172, -3.668683, TRUE),
+(2, 'Propiedad vinateros', 'Dirección 2', 'turistico', 'Madrid', 'España', 40.410674, -3.654633, TRUE),
+(3, 'Guzman del bueno', 'Dirección 3', 'corporativo', 'Madrid', 'España', 40.434092, -3.713227, TRUE),
+(4, 'Balseiro', 'Dirección 4', 'turistico', 'Madrid', 'España', 40.449905, -3.710190, TRUE),
+(5, 'Maria del portugal', 'Dirección 5', 'corporativo', 'Madrid', 'España', 40.495361, -3.664375, TRUE),
+(6, 'Vallecas', 'Dirección 6', 'corporativo', 'Madrid', 'España', 40.363814, -3.587611, TRUE),
+(7, 'Botanic (Valencia)', 'Dirección 7', 'turistico', 'Valencia', 'España', 39.471748, -0.385786, TRUE),
+(8, 'San ramon (Barcelona)', 'Dirección 8', 'turistico', 'Barcelona', 'España', 41.385891, 2.126838, TRUE),
+(9, 'Badalona (Barcelona)', 'Dirección 9', 'corporativo', 'Barcelona', 'España', 41.458080, 2.241886, TRUE),
+(10, 'Miami gardens (Miami)', 'Dirección 10', 'corporativo', 'Miami', 'EEUU', 25.941063, -80.200227, TRUE);
+
+-- Tarifas corporativas (mensuales)
+INSERT INTO tarifa (apartamento_id, fecha_inicio, fecha_fin, precio, tipo)
+VALUES
+(1, '2025-01-01', '2025-03-31', 3000, 'mensual'),
+(1, '2025-04-01', '2025-12-31', 4000, 'mensual'),
+(3, '2025-01-01', '2025-12-31', 3500, 'mensual'),
+(5, '2025-01-01', '2025-06-30', 2800, 'mensual'),
+(6, '2025-01-01', '2025-12-31', 3100, 'mensual'),
+(9, '2025-01-01', '2025-12-31', 3900, 'mensual'),
+(10, '2025-01-01', '2025-12-31', 5000, 'mensual');
+
+-- Tarifas turísticas (diarias)
+INSERT INTO tarifa (apartamento_id, fecha_inicio, fecha_fin, precio, tipo)
+VALUES
+(2, '2025-01-01', '2025-03-31', 50, 'diario'),
+(2, '2025-04-01', '2025-12-31', 100, 'diario'),
+(4, '2025-01-01', '2025-12-31', 90, 'diario'),
+(7, '2025-01-01', '2025-12-31', 70, 'diario'),
+(8, '2025-01-01', '2025-12-31', 110, 'diario');
+
+-- b2 insert info propiedad
+INSERT INTO propiedad_info (codigo_propiedad, descripcion, url_imagen)
+VALUES
+(1, 'Apartamento ejecutivo en zona céntrica con todos los servicios', 'https://example.com/torrenazas.jpg'),
+(2, 'Apartamento turístico ideal para estancias cortas', 'https://example.com/vinateros.jpg'),
+(3, 'Apartamento amplio y moderno cerca de universidades', 'https://example.com/guzman.jpg'),
+(4, 'Acogedor apartamento turístico en zona tranquila', 'https://example.com/balseiro.jpg'),
+(5, 'Apartamento corporativo con excelentes vistas', 'https://example.com/portugal.jpg'),
+(6, 'Apartamento ideal para ejecutivos en movilidad', 'https://example.com/vallecas.jpg'),
+(7, 'Apartamento turístico en el corazón de Valencia', 'https://example.com/botanic.jpg'),
+(8, 'Estancia ideal en Barcelona para escapadas urbanas', 'https://example.com/sanramon.jpg'),
+(9, 'Departamento corporativo moderno en Badalona', 'https://example.com/badalona.jpg'),
+(10, 'Apartamento de lujo en Miami Gardens', 'https://example.com/miami.jpg');
