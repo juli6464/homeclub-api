@@ -23,7 +23,7 @@ Retorna un listado de propiedades activas ordenadas por cercanía, filtrando por
 #### 🔗 URL de ejemplo
 
 ```
-GET http://localhost:3000/apartamentos/propiedades-cercanas?lat=40.42&lng=-3.67&tipo=corporativo
+GET http://localhost:3000/apartamentos/propiedades-cercanas?lat=5.510565&lng=-73.359264&tipo=corporativo&limit=10&page=1
 ```
 
 #### 📌 Parámetros disponibles

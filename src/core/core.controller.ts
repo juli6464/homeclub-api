@@ -40,7 +40,7 @@ export class CoreController {
     min: query.min ? parseFloat(query.min) : undefined,
     max: query.max ? parseFloat(query.max) : undefined,
     page: query.page ? parseInt(query.page) : 1,
-    limit: query.limit ? parseInt(query.limit) : 5,
+    limit: query.limit ? parseInt(query.limit) : 10,
   });
 }
 }

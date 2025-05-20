@@ -43,11 +43,11 @@ async listarPropiedadesCercanasSimple(query: {
   tipo?: 'corporativo' | 'turistico';
   min?: number;
   max?: number;
+  dias?: number;
   page?: number;
   limit?: number;
-  dias?: number;
 }) {
-  const { lat, lng, tipo, min, max, page = 1, limit = 5, dias } = query;
+  const { lat, lng, tipo, min, max, page, limit, dias } = query;
   const offset = (page - 1) * limit;
   const hoy = new Date().toISOString().split('T')[0];
 
